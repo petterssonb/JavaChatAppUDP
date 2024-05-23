@@ -5,6 +5,7 @@ import java.net.*;
 public class MulticastCollector {
     private MessageListener listener;
 
+
     public MulticastCollector(MessageListener listener) throws IOException {
         this.listener = listener;
         int port = 20480;
@@ -30,7 +31,7 @@ public class MulticastCollector {
         } catch(IOException e) {
             e.printStackTrace();
         } finally {
-            if (socket != null && !socket.isBound()){
+            if (socket != null){
                 socket.close();
             }
         }
