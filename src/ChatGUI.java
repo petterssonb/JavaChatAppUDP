@@ -145,27 +145,24 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
         return username != null && !username.isEmpty();
     }
 
-    private void sendSystemMessage(String message){
+    private void sendSystemMessage(String message) {
         try {
             sender.sendMessage("SYSTEM", message);
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+
     private void sendUserConnect(){
         updateMemberList(username, true);
-        requestMemberList();
         sendSystemMessage("CONNECTED: " + username);
-        broadcastUserListUpdate();
     }
 
 
     private void sendUserDisconnect(){
         updateMemberList(username, false);
-        requestMemberList();
         sendSystemMessage("DISCONNECTED: " + username);
-        broadcastUserListUpdate();
     }
 
     private void updateMemberList(String username, boolean add){
@@ -187,11 +184,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
         for (String user : members){
             memberArea.append(user + "\n");
         }
-    }
-
-    private void requestMemberList(){
-        sendSystemMessage("REQUEST_MEMBERLIST");
-        refreshMemberList();
     }
 
     private void broadcastUserListUpdate(){
