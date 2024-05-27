@@ -2,9 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 
@@ -22,31 +20,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
 
     private Set<String> members = new LinkedHashSet<>();
 
-
-    private void saveMembersToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("members.txt"))) {
-            for (String member : members) {
-                writer.write(member);
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadMembersFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("members.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                members.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
     ChatGUI() {
         super("Chat Application");
         username = JOptionPane.showInputDialog(this, "Enter your name");
@@ -55,7 +28,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
         }
 
         setupGUI();
-        loadMembersFromFile();
 
         try {
             sender = new MulticastSender();
@@ -70,9 +42,9 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
             e.printStackTrace();
             JOptionPane.showInputDialog(this, "Error setting up network component");
         }
+        sendUserConnect();
         receiverThread.start();
 
-        sendUserConnect();
 
 
     }
@@ -132,7 +104,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }
-                saveMembersToFile();
                 System.exit(0);
             }
         });
@@ -167,6 +138,7 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
 
     private void sendUserConnect(){
         updateMemberList(username, true);
+        chatArea.append(username + " has connected\n");
         sendSystemMessage("CONNECTED: " + username);
     }
 
@@ -176,26 +148,28 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
         sendSystemMessage("DISCONNECTED: " + username);
     }
 
-    private void updateMemberList(String username, boolean add){
-        boolean changed = false;
-        if (add){
-            changed = members.add(username);
+    private void updateMemberList(String username, boolean add) {
+        if (add) {
+            if (!members.contains(username)) {
+                members.add(username);
+                refreshMemberList();
+            }
         } else {
-            changed = members.remove(username);
-        }
-        if(changed){
-            saveMembersToFile();
-            refreshMemberList();
+            if (members.contains(username)) {
+                members.remove(username);
+                refreshMemberList();
+            }
         }
     }
 
-    private void refreshMemberList(){
 
+    private void refreshMemberList() {
         memberArea.setText("");
-        for (String user : members){
+        for (String user : members) {
             memberArea.append(user + "\n");
         }
     }
+
 
     private void broadcastUserListUpdate(){
         String userList = ("MEMBERLIST: " + String.join("\n", members));
@@ -206,19 +180,31 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
         SwingUtilities.invokeLater(() -> {
             if (msg.startsWith("CONNECTED: ")) {
                 String connectedUsername = msg.substring(11).trim();
-                chatArea.append(connectedUsername + " has connected\n");
-                updateMemberList(connectedUsername, true);
-                broadcastUserListUpdate();
+                if (!members.contains(connectedUsername)) {
+                    members.add(connectedUsername);
+                    chatArea.append(connectedUsername + " has connected\n");
+                    //updateMemberList(connectedUsername, true);
+                    refreshMemberList();
+                    if (!connectedUsername.equals(username)) {
+                        sendSystemMessage("CONNECTED: " + username);
+                    }
+                    broadcastUserListUpdate();
+                }
             } else if (msg.startsWith("DISCONNECTED: ")) {
                 String disconnectedUsername = msg.substring(13).trim();
-                chatArea.append(disconnectedUsername + " has disconnected\n");
-                updateMemberList(disconnectedUsername, false);
-                broadcastUserListUpdate();
-            } else if (msg.startsWith("REQUEST_MEMBERLIST")){
+                if (members.contains(disconnectedUsername)) {
+                    members.remove(disconnectedUsername);
+                    chatArea.append(disconnectedUsername + " has disconnected\n");
+                    updateMemberList(disconnectedUsername, false);
+                    refreshMemberList();
+                    broadcastUserListUpdate();
+                }
+            } else if (msg.startsWith("REQUEST_MEMBERLIST")) {
                 broadcastUserListToRequester(msg.substring(17).trim());
             }
         });
     }
+
 
     private void broadcastUserListToRequester(String requesterUsername){
         String userList = "MEMBERLIST: " + String.join("\n", members);
