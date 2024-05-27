@@ -10,8 +10,11 @@ import java.util.Set;
 
 public class ChatGUI extends JFrame implements ActionListener, MessageListener {
     private JPanel mainPanel;
+    private JPanel chatPanel;
+    private JPanel memberPanel;
     private JTextField messageInput;
     private JTextArea chatArea, memberArea;
+    private JScrollPane chatScrollPane, memberScrollPane;
     private JButton sendButton, disconnectButton;
     private String username;
     private MulticastSender sender;
@@ -77,13 +80,21 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
     private void setupGUI(){
         mainPanel = new JPanel(new BorderLayout());
 
+        chatPanel = new JPanel(new BorderLayout());
         chatArea = new JTextArea(20, 40);
         chatArea.setEditable(false);
-        mainPanel.add(chatArea, BorderLayout.WEST);
+        chatScrollPane = new JScrollPane(chatArea);
+        chatScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        chatPanel.add(chatScrollPane, BorderLayout.EAST);
+        mainPanel.add(chatPanel, BorderLayout.WEST);
 
+        memberPanel = new JPanel(new BorderLayout());
         memberArea = new JTextArea(20, 20);
         memberArea.setEditable(false);
-        mainPanel.add(memberArea, BorderLayout.EAST);
+        memberScrollPane = new JScrollPane(memberArea);
+        memberScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        memberPanel.add(memberScrollPane, BorderLayout.EAST);
+        mainPanel.add(memberPanel, BorderLayout.EAST);
 
         disconnectButton = new JButton("Disconnect");
         JPanel disconnectPanel = new JPanel(new BorderLayout());
