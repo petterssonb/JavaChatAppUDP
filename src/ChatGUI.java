@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 
+
 public class ChatGUI extends JFrame implements ActionListener, MessageListener {
     private JPanel mainPanel;
     private JPanel chatPanel;
@@ -19,13 +20,15 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
     private Thread receiverThread;
 
     private Set<String> members = new LinkedHashSet<>();
+    private Timer broadcastTimer;
 
     ChatGUI() {
-        super("Chat Application");
         username = JOptionPane.showInputDialog(this, "Enter your name");
         if (!checkIfUsernameIsValid(username)) {
             System.exit(0);
         }
+
+        setTitle("Chat - " + username);
 
         setupGUI();
 
@@ -44,6 +47,15 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
         }
         sendUserConnect();
         receiverThread.start();
+        int delay = 100;
+        ActionListener taskPerformer = new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                    sendUserConnect();
+            }
+        };
+        broadcastTimer = new Timer(delay, taskPerformer);
+        broadcastTimer.start();
+
 
 
 
@@ -138,7 +150,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
 
     private void sendUserConnect(){
         updateMemberList(username, true);
-        chatArea.append(username + " has connected\n");
         sendSystemMessage("CONNECTED: " + username);
     }
 
@@ -171,10 +182,15 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
     }
 
 
-    private void broadcastUserListUpdate(){
-        String userList = ("MEMBERLIST: " + String.join("\n", members));
-        sendSystemMessage(userList);
+    private void broadcastUserListUpdate() {
+        String userList = "SYSTEM: MEMBERLIST: " + String.join("\n", members);
+        try {
+            sender.sendMessage("SYSTEM", userList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 
     private void handleSystemMessage(String msg) {
         SwingUtilities.invokeLater(() -> {
@@ -183,7 +199,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
                 if (!members.contains(connectedUsername)) {
                     members.add(connectedUsername);
                     chatArea.append(connectedUsername + " has connected\n");
-                    //updateMemberList(connectedUsername, true);
                     refreshMemberList();
                     if (!connectedUsername.equals(username)) {
                         sendSystemMessage("CONNECTED: " + username);
