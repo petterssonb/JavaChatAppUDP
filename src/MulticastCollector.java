@@ -1,10 +1,9 @@
-
 import java.io.IOException;
 import java.net.*;
 
 public class MulticastCollector {
-    private MessageListener listener;
 
+    private MessageListener listener;
 
     public MulticastCollector(MessageListener listener) throws IOException {
         this.listener = listener;
@@ -36,8 +35,4 @@ public class MulticastCollector {
             }
         }
     }
-
-
-
-
 }

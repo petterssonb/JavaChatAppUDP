@@ -5,8 +5,6 @@ import java.io.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-
-
 public class ChatGUI extends JFrame implements ActionListener, MessageListener {
     private JPanel mainPanel;
     private JPanel chatPanel;
@@ -55,10 +53,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
         };
         broadcastTimer = new Timer(delay, taskPerformer);
         broadcastTimer.start();
-
-
-
-
     }
 
     private void setupGUI(){
@@ -84,7 +78,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
         JPanel disconnectPanel = new JPanel(new BorderLayout());
         disconnectPanel.add(disconnectButton, BorderLayout.CENTER);
         mainPanel.add(disconnectPanel, BorderLayout.NORTH);
-
 
         messageInput = new JTextField(30);
         sendButton = new JButton("Send");
@@ -147,12 +140,10 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
         }
     }
 
-
     private void sendUserConnect(){
         updateMemberList(username, true);
         sendSystemMessage("CONNECTED: " + username);
     }
-
 
     private void sendUserDisconnect(){
         updateMemberList(username, false);
@@ -173,14 +164,12 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
         }
     }
 
-
     private void refreshMemberList() {
         memberArea.setText("");
         for (String user : members) {
             memberArea.append(user + "\n");
         }
     }
-
 
     private void broadcastUserListUpdate() {
         String userList = "SYSTEM: MEMBERLIST: " + String.join("\n", members);
@@ -190,7 +179,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
             e.printStackTrace();
         }
     }
-
 
     private void handleSystemMessage(String msg) {
         SwingUtilities.invokeLater(() -> {
@@ -220,7 +208,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
         });
     }
 
-
     private void broadcastUserListToRequester(String requesterUsername){
         String userList = "MEMBERLIST: " + String.join("\n", members);
         try {
@@ -229,7 +216,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
             e.printStackTrace();
         }
     }
-
 
     private void updateMemberListView(String memberListString){
         SwingUtilities.invokeLater(() -> {
@@ -242,7 +228,6 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
             }
         });
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e){
@@ -273,9 +258,5 @@ public class ChatGUI extends JFrame implements ActionListener, MessageListener {
                 chatArea.append(message + "\n");
             });
         }
-
     }
-
-
-
 }
