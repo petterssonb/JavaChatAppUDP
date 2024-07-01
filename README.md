@@ -14,4 +14,7 @@ Get-NetAdapter
 ```
 
 External libs used:
-Flatlaf: https://github.com/JFormDesigner/FlatLaf?tab=readme-ov-file
+
+Flatlaf:
+
+https://github.com/JFormDesigner/FlatLaf?tab=readme-ov-file
