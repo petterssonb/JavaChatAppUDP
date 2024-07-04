@@ -1,5 +1,9 @@
 Be sure to change the network interface from "en0" (en0 is common for MacOS) to what network inerface you have on your device.
-You find where to change network interface on line 16 inside MulticastCollector.java
+You find where to change network interface on line 16 inside MulticastCollector.java:
+
+```java
+NetworkInterface netIf = NetworkInterface.getByName("change here");
+```
 
 To check which network interface you have on your device, you can run the following command in the terminal:
 
