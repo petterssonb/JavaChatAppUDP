@@ -21,6 +21,27 @@ The primary purpose of this chat app is to demonstrate the implementation of net
 ![Chat Screenshot](images/Chat.jpg)
 
 
+## How to Run
+
+1. Clone the repository to your local machine.
+
+```bash
+git clone https://github.com/petterssonb/JavaChatAppUDP.git 
+```
+
+2. Navigate to the project directory.
+
+```bash
+cd JavaChatAppUDP
+```
+
+3. Run the app:
+
+ - Run Main.java in your IDE.
+ - Choose a username and click "ok".
+ - Start chatting!
+
+
 
 ## Network Interface Configuration
 
