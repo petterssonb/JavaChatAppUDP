@@ -70,3 +70,7 @@ Get-NetAdapter
  ##### Flatlaf:
 
 [Flatlaf Github Repository](https://github.com/JFormDesigner/FlatLaf?tab=readme-ov-file)
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
